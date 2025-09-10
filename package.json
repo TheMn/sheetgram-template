@@ -1,0 +1,39 @@
+{
+  "name": "sheetgram-template",
+  "version": "1.0.0",
+  "description": "A template for developing Telegram bots with TypeScript and deploying them to Google Apps Script.",
+  "main": "dist/bundle.js",
+  "scripts": {
+    "build": "npx esbuild src/main.ts --bundle --outfile=dist/bundle.js --target=es2020 --format=cjs",
+    "deploy": "npm run build && npx @google/clasp push"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheMn/sheetgram-template.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "google-apps-script",
+    "typescript",
+    "grammy",
+    "esbuild",
+    "clasp"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TheMn/sheetgram-template/issues"
+  },
+  "homepage": "https://github.com/TheMn/sheetgram-template#readme",
+  "devDependencies": {
+    "@google/clasp": "^3.0.6-alpha",
+    "@types/google-apps-script": "^2.0.1",
+    "@types/node": "^24.3.1",
+    "esbuild": "^0.25.9",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@grammyjs/types": "^3.22.2"
+  }
+}

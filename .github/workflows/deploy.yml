@@ -1,0 +1,47 @@
+name: Deploy to Google Apps Script
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Create .clasprc.json for authentication
+        run: |
+          echo '{
+            "token": {
+              "access_token": "${{ secrets.CLASP_ACCESS_TOKEN }}",
+              "refresh_token": "${{ secrets.CLASP_REFRESH_TOKEN }}",
+              "scope": "https://www.googleapis.com/auth/script.projects https://www.googleapis.com/auth/script.deployments https://www.googleapis.com/auth/script.webapp https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/service.management",
+              "token_type": "Bearer",
+              "expiry_date": 9999999999999
+            },
+            "oauth2ClientSettings": {
+              "clientId": "1072944905499-vm2v2i5dvn0a0d2o4ca36i2vge8cvbn0.apps.googleusercontent.com",
+              "clientSecret": "6I-BfC5N2r_2-i3O2q4JgTmA",
+              "redirectUri": "http://localhost"
+            }
+          }' > ~/.clasprc.json
+
+      - name: Update scriptId in .clasp.json
+        run: sed -i 's/YOUR_SCRIPT_ID_HERE/${{ secrets.CLASP_SCRIPT_ID }}/g' .clasp.json
+
+      - name: Push to Google Apps Script
+        run: npx @google/clasp push --force
