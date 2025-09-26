@@ -41,11 +41,11 @@ export class SheetsManager {
 
     const values = sheet.getDataRange().getValues();
     const headers = values?.length ? values.shift()!.map(String) : [];
-    const items = values.map((row) =>
-      headers.reduce((obj, header, i) => {
+    const items = values.map((row: any[]) =>
+      headers.reduce((obj: Record<string, any>, header: string, i: number) => {
         obj[header] = row[i];
         return obj;
-      }, {} as any),
+      }, {} as Record<string, any>),
     );
 
     this.cache[sheetName] = { sheet, headers, items, isDirty: false };
@@ -133,8 +133,8 @@ export class SheetsManager {
         const { sheet, headers, items } = sheetData;
 
         // Convert array of objects back to a 2D array for writing
-        const newValues = items.map((item) =>
-          headers.map((header) => item[header] ?? ""),
+        const newValues = items.map((item: Record<string, any>) =>
+          headers.map((header: string) => item[header] ?? ""),
         );
 
         // Add headers back to the very top of our data array

@@ -3,12 +3,14 @@ export const TELEGRAM_TOKEN = scriptProperties.getProperty("TELEGRAM_TOKEN");
 export const TELEGRAM_URL = "https://api.telegram.org/bot" + TELEGRAM_TOKEN;
 export const WEBAPP_URL = scriptProperties.getProperty("WEBAPP_URL")!;
 export const SPREADSHEET_ID = scriptProperties.getProperty("SPREADSHEET_ID")!;
-
+export const OPENROUTER_API_KEY = scriptProperties.getProperty("OPENROUTER_API_KEY")!;
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-export const CHANNEL_ID = "@starpayapp";
+export const CHANNEL_ID = "@zldksnflqmtm";
 
-export const GROUP_ID = 2216991273;
+export const GROUP_ID = -1003190785380;
 export const THREAD_LOGS_ID = 890;
+export const THREAD_ML_ID = 4;
+export const THREAD_GN_ID = 1;
 export const ALLOWED_STATUSES = ["member", "creator", "administrator"];
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
