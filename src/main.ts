@@ -1,9 +1,9 @@
 import { Message, Update } from "@grammyjs/types";
 import { CHANNEL_ID, GROUP_ID, OPENROUTER_API_KEY, WEBAPP_URL } from "./vars";
-import { handleUserMessage } from "./users";
 import { notifyError } from "./helpers";
 import { TelegramAPI } from "./telegram";
 import { categorizeText } from "./agent";
+import { CATALOG } from "./catalog"; // Import the new catalog
 
 function setWebhook() {
   const response = TelegramAPI.call("setWebhook", {
@@ -24,11 +24,25 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
       return;
     }
 
-    const categories = categorizeText("the vs course is held 15 mins late. regards ar.", OPENROUTER_API_KEY);
-    TelegramAPI.call("sendMessage", {
-      chat_id: GROUP_ID,
-      text: JSON.stringify(categories) || "No categories found",
-      parse_mode: "HTML"
+    const text = channel_post.text || channel_post.caption || "Digital Humanities Master Program";
+    const categories = categorizeText(text, OPENROUTER_API_KEY);
+
+    categories.forEach(categoryId => {
+      // Determine the correct thread ID for either the program or a specific course
+      if (categoryId === 11945) {
+        TelegramAPI.call("copyMessage", {
+          chat_id: GROUP_ID,
+          from_chat_id: CHANNEL_ID,
+          message_id: channel_post.message_id,
+        });
+      } else {
+        TelegramAPI.call("copyMessage", {
+          chat_id: GROUP_ID,
+          message_thread_id: CATALOG.courses[categoryId]?.telegram_thread_id,
+          from_chat_id: CHANNEL_ID,
+          message_id: channel_post.message_id,
+        });
+      }
     });
 
   } catch (error) {

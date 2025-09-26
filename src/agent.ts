@@ -1,6 +1,6 @@
 import { getErrorMessage } from "./helpers";
+import { CATALOG } from "./catalog"; // Import the new catalog
 
-// Define a type for the expected API response to improve type safety
 // Define a type for the expected API response to improve type safety
 interface OpenRouterResponse {
     choices?: {
@@ -17,43 +17,39 @@ interface OpenRouterResponse {
 export function categorizeText(inputText: string, apiKey: string): number[] {
     if (!apiKey) throw new Error("Provide apiKey");
 
-    // ... [CATALOG, systemPrompt, messages, and payload remain exactly the same] ...
-    const CATALOG = {
-        program: { id: 11945, title: "Digital Humanities - Interactive Systems and Digital Media (Master)", coordinator: "Ilaria Torre" },
-        courses: [
-            { id: 111193, code: "DATA SEMANTICS FOR ARTS", teachers: ["Ilaria Torre"] },
-            { id: 80158, code: "HUMAN COMPUTER INTERACTION", teachers: ["Antonio Camurri"] },
-            { id: 86798, code: "MACHINE LEARNING AND DEEP LEARNING", teachers: ["Luca Oneto", "Davide Anguita"] },
-            { id: 90689, code: "IMAGE AND VIDEO PROCESSING", teachers: ["Eleonora Ceccaldi", "Annalisa Barla"] },
-            { id: 90690, code: "SOUND AND MUSIC COMPUTING", teachers: ["Gualtiero Volpe"] },
-            { id: 90621, code: "MULTIMODAL NARRATIVES", teachers: ["Nicola Ferrari"] },
-            { id: 111363, code: "PSYCHOLOGY OF PERCEPTION", teachers: ["Eleonora Ceccaldi"] },
-            { id: 104904, code: "RESEARCH METHODS IN SOCIAL SCIENCE", teachers: ["Enrico By Bella"] },
-            { id: 118898, code: "DESIGN AND NARRATIVE" },
-            { id: 83839, code: "INTERACTION DESIGN", teachers: ["Federica Delprino", "Maria Morozzo..."] },
-            { id: 83847, code: "GRAPHICS AND MULTIMEDIA", teachers: ["Massimo Malagugini"] },
-            { id: 90619, code: "WRITING FOR DIGITAL MEDIA", teachers: ["Jacqueline Visconti", "Manuela Manfredini"] },
-            { id: 111194, code: "VISUAL SEMIOTICS", teachers: ["Rocco Antonucci"] },
-            { id: 118885, code: "MEDIA CONTENT PRODUCTION", teachers: ["Saverio Iacono"] }
-        ]
-    };
-
     const systemPrompt = `
 You are an academic categorization agent. 
 Return ONLY a JSON array of numeric course IDs (e.g. [118885, 86798]).
-- No prose, no code fences, no comments. 
-- If input is program-level (mentions "master", "degree", "study plan", "Teaching Office", "AulaWeb", "class schedule", "program", etc.) → include program id 11945. 
-- Use course names or professor names from the CATALOG to map to ids.
+- No prose, no code fences, no comments.
+- If input is generic or program-level (mentions "master", "degree", "study plan", "Teaching Office", "AulaWeb", "class schedule", "program", etc.) → include program id 11945.
+- Map input to course IDs using the course code, abbreviations (abbr), or full teacher names from the CATALOG.
+- Recognize course IDs when mentioned directly (e.g., #83847).
 - Be deterministic.`;
 
     const messages = [
         { role: "system", content: systemPrompt + "\nCATALOG:" + JSON.stringify(CATALOG) },
-        { role: "user", content: "There’s no general MS-Teams channel for the Digital Humanities master; updates come by email from the Teaching Office and the university, not from AulaWeb. The ML course only needs the provided meeting link." },
-        { role: "assistant", content: "[11945, 86798]" },
-        { role: "user", content: "PDF version of class schedule exported from easyacademy ... Mandatory: IMAGE AND VIDEO PROCESSING, INTERACTION DESIGN, MEDIA CONTENT PRODUCTION" },
+
+        // Case: Mix of program-level and course abbreviation
+        { role: "user", content: "The Teaching Office sent an email about the final exam for the HCI course." },
+        { role: "assistant", content: "[11945, 80158]" },
+
+        // Case: Professor abbreviation and hashtag
+        { role: "user", content: "Any updates from -F. Delprino for the #interactionDesign class?" },
+        { role: "assistant", content: "[83839]" },
+
+        // Case: Direct ID mention with custom format
+        { role: "user", content: "Don't forget to submit the assignment for #GnM_83847 by midnight." },
+        { role: "assistant", content: "[83847]" },
+
+        // Case: Generic, program-level question
+        { role: "user", content: "What are the deadlines for the study plan submission?" },
         { role: "assistant", content: "[11945]" },
-        { role: "user", content: "the mcp course is not going to be held this week" },
-        { role: "assistant", content: "[118885]" },
+
+        // Case: Multiple course abbreviations
+        { role: "user", content: "The lessons for MCP and WDM are cancelled this week." },
+        { role: "assistant", content: "[118885, 90619]" },
+
+        // Your actual input now goes here
         { role: "user", content: inputText }
     ];
 
@@ -109,6 +105,10 @@ Return ONLY a JSON array of numeric course IDs (e.g. [118885, 86798]).
             const match = raw.match(/\[[\d,\s]*\]/);
             const arrText = match ? match[0] : "[]";
             arr = JSON.parse(arrText);
+        }
+
+        if (arr.length === 0) {
+            return [11945]; // Program ID for Digital Humanities
         }
 
         return arr;
