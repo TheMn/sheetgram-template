@@ -1,0 +1,11 @@
+{
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "isolatedModules": true,
+    "strict": true,
+    "target": "ESNext",
+    "module": "NodeNext",
+    "lib": ["ESNext"]
+  }
+}
