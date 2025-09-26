@@ -5,13 +5,11 @@ export const WEBAPP_URL = scriptProperties.getProperty("WEBAPP_URL")!;
 export const SPREADSHEET_ID = scriptProperties.getProperty("SPREADSHEET_ID")!;
 export const OPENROUTER_API_KEY = scriptProperties.getProperty("OPENROUTER_API_KEY")!;
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-export const CHANNEL_ID = "@zldksnflqmtm";
+export const CHANNEL_ID = "@genoadihu";
 
-export const GROUP_ID = -1003190785380;
-export const THREAD_LOGS_ID = 890;
-export const THREAD_ML_ID = 4;
-export const THREAD_GN_ID = 1;
-export const ALLOWED_STATUSES = ["member", "creator", "administrator"];
+export const GROUP_ID = -1002957887308;
+export const THREAD_LOGS_ID = 1;
+// export const ALLOWED_STATUSES = ["member", "creator", "administrator"];
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 export const MSG_WELCOME = "سلام دوباره!";
