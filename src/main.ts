@@ -30,18 +30,19 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
     categories.forEach(categoryId => {
       // Determine the correct thread ID for either the program or a specific course
       if (categoryId === 11945) {
-        TelegramAPI.call("copyMessage", {
+        TelegramAPI.call("forwardMessage", {
           chat_id: GROUP_ID,
           from_chat_id: CHANNEL_ID,
           message_id: channel_post.message_id,
         });
       } else {
-        TelegramAPI.call("copyMessage", {
+        TelegramAPI.call("forwardMessage", {
           chat_id: GROUP_ID,
           message_thread_id: CATALOG.courses[categoryId]?.telegram_thread_id,
           from_chat_id: CHANNEL_ID,
           message_id: channel_post.message_id,
         });
+
       }
     });
 
