@@ -9,6 +9,7 @@ export const CHANNEL_ID = "@genoadihu";
 
 export const GROUP_ID = -1002957887308;
 export const THREAD_LOGS_ID = 1;
+export const THREAD_UPDATES_ID = 2; // Assuming 2 is the thread for updates
 // export const ALLOWED_STATUSES = ["member", "creator", "administrator"];
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
@@ -18,3 +19,8 @@ export const MSG_SHOULD_JOIN_FIRST =
 export const MSG_BANNED = "اجازه‌ی استفاده از امکانات این ربات را نداری.";
 
 export const ERR_CANT_BE_EMPTY = "متن دستور نمی‌تواند خالی باشد!";
+
+// ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+// Data Watcher
+export const DATA_WEBSITE_URL = "https://www.unige.it/didattica/corsi/8754"; // TODO: Replace with the actual URL to monitor
+export const HASH_PROPERTY_KEY = "WEBSITE_DATA_HASH";

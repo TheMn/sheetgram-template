@@ -1,5 +1,5 @@
 import { Message } from "@grammyjs/types";
-import { GROUP_ID, THREAD_LOGS_ID } from "./vars";
+import { GROUP_ID, THREAD_LOGS_ID, THREAD_UPDATES_ID } from "./vars";
 import { TelegramAPI } from "./telegram";
 
 export const escapeMD = (text: string) =>
@@ -48,4 +48,23 @@ ${escapeMD(error.stack)}
 
 export function getText(telegramMessage: Message) {
   return telegramMessage.text || telegramMessage.caption || "Default Text";
+}
+
+/**
+ * Notifies about detected changes to a specific Telegram thread.
+ * @param message The message to send.
+ */
+export function notifyChange(message: string) {
+  try {
+    TelegramAPI.call("sendMessage", {
+      chat_id: GROUP_ID,
+      message_thread_id: THREAD_UPDATES_ID,
+      text: message,
+      parse_mode: "MarkdownV2",
+    });
+  } catch (apiError) {
+    Logger.log(
+      `Failed to send change notification to Telegram. Error: ${getErrorMessage(apiError)}`,
+    );
+  }
 }

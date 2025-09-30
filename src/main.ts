@@ -4,6 +4,7 @@ import { notifyError } from "./helpers";
 import { TelegramAPI } from "./telegram";
 import { categorizeText } from "./agent";
 import { CATALOG } from "./catalog"; // Import the new catalog
+import { checkForUpdates } from "./data-watcher";
 
 function setWebhook() {
   const response = TelegramAPI.call("setWebhook", {
@@ -49,4 +50,41 @@ function doPost(e: GoogleAppsScript.Events.DoPost) {
   } catch (error) {
     notifyError(error);
   }
+}
+
+// ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+// Data Watcher Functions
+
+/**
+ * A function to be called by a time-based trigger to check for website updates.
+ */
+function runHealthCheck() {
+  try {
+    Logger.log("Running health check...");
+    checkForUpdates();
+    Logger.log("Health check finished.");
+  } catch (error) {
+    notifyError(error);
+  }
+}
+
+/**
+ * Sets up a time-based trigger for the health check.
+ * Deletes existing triggers to prevent duplicates.
+ * The user should run this function once from the script editor.
+ */
+function setup() {
+  // Delete all existing triggers to avoid duplicates
+  const allTriggers = ScriptApp.getProjectTriggers();
+  for (const trigger of allTriggers) {
+    ScriptApp.deleteTrigger(trigger);
+  }
+
+  // Create a new trigger to run the health check every 10 minutes
+  ScriptApp.newTrigger("runHealthCheck")
+    .timeBased()
+    .everyMinutes(10)
+    .create();
+
+  Logger.log("Time-based trigger for runHealthCheck created successfully. It will run every 10 minutes.");
 }
