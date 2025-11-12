@@ -1,0 +1,13 @@
+{
+  "api_key": "YOUR_OPENROUTER_API_KEY",
+  "models": [
+    "mistralai/mistral-7b-instruct",
+    "google/gemini-pro",
+    "openai/gpt-3.5-turbo"
+  ],
+  "hotkeys": {
+    "start_capture": "<ctrl>+<alt>+1",
+    "end_capture": "<ctrl>+<alt>+2"
+  },
+  "tooltip_duration_ms": 5000
+}

@@ -1,122 +1,58 @@
-# Sheetgram Template
+# Problem Solver Tool
 
-This project is a template for a Telegram bot built with TypeScript and Google Apps Script. It's designed to be customized for various functionalities like managing user interactions with Google Sheets.
+A lightweight background Python application that allows a user to select a screen area, extract text via OCR, send it to an LLM, and display the response as a floating tooltip.
 
 ## Features
-*(Customize based on your needs)*
 
-## Technologies Used
+- **Hotkey-Driven Capture**: No visible UI. Use hotkeys to define the start and end of your capture area.
+- **OCR Text Extraction**: Uses Tesseract to accurately extract text from any region of your screen.
+- **Flexible LLM Integration**: Connects to the OpenRouter API, allowing you to use a prioritized list of different models.
+- **Floating Tooltip**: Displays the LLM's answer in a discreet, auto-closing tooltip near your cursor.
+- **Background Operation**: Runs silently in the system tray with options to pause, resume, or exit.
 
-*   **TypeScript:** The primary language for the bot's logic.
-*   **Google Apps Script:** The platform for hosting and running the bot.
-*   **esbuild:** A fast bundler for compiling the TypeScript code into a single JavaScript file for Google Apps Script.
-*   **clasp:** The command-line tool for managing Google Apps Script projects.
-*   **Grammy:** The bot is built using the Grammy framework for creating Telegram bots.
+## Prerequisites
 
-## Project Structure
+1.  **Python 3.7+**: Ensure you have Python installed.
+2.  **Tesseract OCR**: This tool depends on Google's Tesseract OCR engine. You must install it on your system and ensure it's in your system's PATH.
+    -   **Windows**: Download and run the installer from [Tesseract at UB Mannheim](https://github.com/UB-Mannheim/tesseract/wiki).
+    -   **macOS (via Homebrew)**: `brew install tesseract`
+    -   **Linux (Debian/Ubuntu)**: `sudo apt-get install tesseract-ocr`
 
-```
-.
-├── .clasp.json
-├── .gitignore
-├── dist
-│   └── appsscript.json
-├── package-lock.json
-├── package.json
-├── scripts
-│   └── deploy.sh
-├── src
-│   ├── commands.ts
-│   ├── helpers.ts
-│   ├── main.ts
-│   ├── sheets.ts
-│   ├── telegram.ts
-│   ├── users.ts
-│   └── vars.ts
-└── tsconfig.json
-```
+## Setup and Installation
 
-*   `src/main.ts`: The main entry point for the bot. It handles incoming webhooks and routes messages to the appropriate handlers.
-*   `src/telegram.ts`: A wrapper for the Telegram Bot API, making it easier to send messages and perform other actions.
-*   `src/sheets.ts`: A manager for interacting with the Google Sheet. It provides a simple way to read, write, and update data.
-*   `src/users.ts`: Handles messages from users, including checking for membership in a specific channel.
-*   `src/commands.ts`: Defines and handles the bot's commands.
-*   `src/helpers.ts`: Contains utility functions for things like escaping Markdown and logging errors.
-*   `src/vars.ts`: Stores constants and configuration variables, such as API keys and group IDs.
-*   `scripts/deploy.sh`: A script for building and deploying the bot to Google Apps Script.
-*   `.clasp.json`: The configuration file for the `clasp` command-line tool.
-*   `package.json`: The project's dependencies and scripts.
-*   `tsconfig.json`: The configuration file for the TypeScript compiler.
-
-## Getting Started
-
-### Prerequisites
-
-*   [Node.js](https://nodejs.org/) and [Yarn](https://yarnpkg.com/)
-*   [Google Apps Script CLI (clasp)](https://github.com/google/clasp)
-
-### Installation
-
-1.  Clone the repository:
-
+1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/heokhe/starpay.git
-    cd starpay
+    git clone <repository_url>
+    cd problem-solver-tool
     ```
 
-2.  Install the dependencies:
-
+2.  **Install Python dependencies**:
+    It's recommended to use a virtual environment.
     ```bash
-    yarn install
+    python -m venv venv
+    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+    pip install -r requirements.txt
     ```
 
-3.  Log in to your Google account with `clasp`:
+3.  **Configure the application**:
+    -   Rename `config.template.json` to `config.json`.
+    -   Open `config.json` and add your **OpenRouter API key**.
+    -   Customize the `models` list (from most to least preferred) and hotkeys if desired.
 
-    ```bash
-    clasp login
-    ```
+## How to Run
 
-4.  Create a new Google Apps Script project or clone an existing one. If you're creating a new project, you'll need to create a new Google Sheet as well.
-
-5.  Update the `scriptId` in `.clasp.json` with the ID of your Google Apps Script project.
-
-### Usage
-
-Use the following commands:
-
-- `yarn build`: Build the TypeScript code into JavaScript for deployment.
-
-- `yarn start`: Run the built application locally for testing (note: may require adjustments for GAS APIs).
-
-- `yarn deploy`: Build and deploy to Google Apps Script using clasp.
-
-### Configuration
-
-You'll need to set the following script properties in your Google Apps Script project:
-
-*   `TELEGRAM_TOKEN`: Your Telegram bot token (if applicable).
-*   `WEBAPP_URL`: The URL of your deployed web app.
-*   `SPREADSHEET_ID`: The ID of your Google Sheet.
-
-You can set these properties in the Google Apps Script editor under **Project Settings > Script Properties**.
-
-## Running the Project
-
-To build and deploy the project, run the following command:
-
+Execute the main script from your terminal:
 ```bash
-npm run deploy
+python solver.py
 ```
+The application will start running in the background. You will see a new icon in your system tray.
 
-This will compile the TypeScript code, push it to your Google Apps Script project, and deploy a new version of your web app.
+## How to Use
 
-## How to Contribute
+1.  Press the "start capture" hotkey (default: `<ctrl>+<alt>+1`).
+2.  Move your mouse to the end position of the desired capture area.
+3.  Press the "end capture" hotkey (default: `<ctrl>+<alt>+2`).
+4.  The script will capture the screen region, extract text, and query the LLM.
+5.  A tooltip with the answer will appear near your cursor.
 
-To add a new feature, such as a new command, you'll need to do the following:
-
-1.  Add a new function to `src/commands.ts` to handle the command.
-2.  Add a new case to the `switch` statement in `src/commands.ts` to call your new function.
-3.  If your new command requires any new configuration variables, add them to `src/vars.ts`.
-4.  If your new command needs to interact with the Google Sheet, use the `SheetsManager` class in `src/sheets.ts`.
-5.  If your new command needs to send a message to Telegram, use the `TelegramAPI` class in `src/telegram.ts`.
-6.  Once you've added your new feature, you can run `npm run deploy` to deploy it.
+To stop the application, right-click the tray icon and select "Exit".
