@@ -1,0 +1,8 @@
+pynput
+mss
+pytesseract
+Pillow
+requests
+pystray
+pyautogui
+tkinter
